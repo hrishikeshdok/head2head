@@ -1,0 +1,20 @@
+application: head2head-hrishi
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /.*
+  script: asklogin.py
+
+- url: ./categories
+  script: categories.py  
+
+- url: ./categories/add
+  script: addCategory.py
+
+- url: ./categories/items
+  script: items.py
+  
+- url: ./categories/items/add
+  script: addItems.py
