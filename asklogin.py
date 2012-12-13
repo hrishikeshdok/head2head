@@ -204,7 +204,33 @@ class VotePage(webapp.RequestHandler):
 
 class ResultsPage(webapp.RequestHandler):
     def get(self):
-        self.response.out.write('In Results page')
+        user = users.get_current_user()
+        
+        if user:
+            category = self.request.get('category')
+            
+            if category:
+                #do something
+                items = Item.gql("WHERE ANCESTOR IS :1",getCategoryKey(user.user_id(), category))
+                template_values = {
+                                   'items': items,
+                                   'logoutURL' : users.create_logout_url(self.request.uri)
+                                   }
+            else:
+                categories = db.GqlQuery("SELECT * FROM Category")
+                
+                template_values = {
+                                   'categories': categories,
+                                   'logoutURL' : users.create_logout_url(self.request.uri)
+                                   }
+                
+            path = os.path.join(os.path.dirname(__file__), './html/results.html')
+            self.response.out.write(template.render(path, template_values))
+        
+        else:
+            
+            self.redirect(users.create_login_url(self.request.uri))
+        
 
 application = webapp.WSGIApplication([('/', MainPage),
                                       ('/categories', CategoriesPage),
