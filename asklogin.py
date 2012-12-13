@@ -39,86 +39,112 @@ class MainPage(webapp.RequestHandler):
 class CategoriesPage(webapp.RequestHandler):
     def get(self):
         user = users.get_current_user()
-        categories = db.GqlQuery("SELECT * "
-                            "FROM Category "
-                            "WHERE ANCESTOR IS :1",
-                            getUserKey(user.email()))
+        if user:
+            categories = db.GqlQuery("SELECT * "
+                                "FROM Category "
+                                "WHERE ANCESTOR IS :1",
+                                getUserKey(user.email()))
+            
+            template_values = {
+                'categories': categories,
+                'logoutURL' : users.create_logout_url(self.request.uri)
+                        }
+            path = os.path.join(os.path.dirname(__file__), './html/category.html')
+            self.response.out.write(template.render(path, template_values))
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
         
-        template_values = {
-            'categories': categories
-                    }
-        path = os.path.join(os.path.dirname(__file__), './html/category.html')
-        self.response.out.write(template.render(path, template_values))
     def post(self):
         user = users.get_current_user()
-        category = Category(parent=getUserKey(user.email()))
-        category.name = self.request.get("category_name")
-        category.put()
-        categories = db.GqlQuery("SELECT * "
-                            "FROM Category "
-                            "WHERE ANCESTOR IS :1",
-                            getUserKey(user.email()))
-        
-        template_values = {
-            'categories': categories
-                    }
-        path = os.path.join(os.path.dirname(__file__), './html/category.html')
-        self.response.out.write(template.render(path, template_values))
+        if user:
+            category = Category(parent=getUserKey(user.email()))
+            category.name = self.request.get("category_name")
+            category.put()
+            categories = db.GqlQuery("SELECT * "
+                                "FROM Category "
+                                "WHERE ANCESTOR IS :1",
+                                getUserKey(user.email()))
+            
+            template_values = {
+                'categories': categories,
+                'logoutURL' : users.create_logout_url(self.request.uri)
+                        }
+            path = os.path.join(os.path.dirname(__file__), './html/category.html')
+            self.response.out.write(template.render(path, template_values))
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
 
 class ItemsPage(webapp.RequestHandler):
     def get(self):
-        category = self.request.get("category")
         user = users.get_current_user()
-        items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",getCategoryKey(user.user_id(), category))
+        if user:
+            category = self.request.get("category")
+            user = users.get_current_user()
+
+            items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",getCategoryKey(user.email(), category))
+            
+            template_values = {
+                               'items' : items,
+                               'category' : category,
+                               'logoutURL' : users.create_logout_url(self.request.uri)
+                               }
+            path = os.path.join(os.path.dirname(__file__), './html/items.html')
+            self.response.out.write(template.render(path, template_values))
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
         
-        template_values = {
-                           'items' : items,
-                           'category' : category,
-                           'logoutURL' : users.create_logout_url(self.request.uri)
-                           }
         
-        path = os.path.join(os.path.dirname(__file__), './html/items.html')
-        self.response.out.write(template.render(path, template_values))
     def post(self):
         user = users.get_current_user()
-        category = self.request.get("category")
         
-        item = Item(parent=getCategoryKey(user.user_id(), category))
-        item.name = self.request.get("item_name")
-        item.wins = 0
-        item.loses = 0
-        item.put()
+        if user:
+            category = self.request.get("category")
+            
+            item = Item(parent=getCategoryKey(user.email(), category))
+            item.name = self.request.get("item_name")
+            item.wins = 0
+            item.loses = 0
+            item.put()
+            
+            items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",getCategoryKey(user.email(), category))
+            
+            template_values = {
+                               'items' : items,
+                               'category' : category,
+                               'logoutURL' : users.create_logout_url(self.request.uri)
+                               }
+            
+            path = os.path.join(os.path.dirname(__file__), './html/items.html')
+            self.response.out.write(template.render(path, template_values))
         
-        items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",getCategoryKey(user.user_id(), category))
-        
-        template_values = {
-                           'items' : items,
-                           'category' : category,
-                           'logoutURL' : users.create_logout_url(self.request.uri)
-                           }
-        
-        path = os.path.join(os.path.dirname(__file__), './html/items.html')
-        self.response.out.write(template.render(path, template_values))
-        
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
         
 class VotePage(webapp.RequestHandler):
     def get(self):
         user = users.get_current_user()
         if user:
-            #check for category, if not exist show all categories from all users
-            category = self.request.get("category")
-            winner = self.request.get("winner")
-            loser = self.request.get("loser")
+            #check for key, if not exist show all categories from all users
+            key = self.request.get("key")
+            wKey = self.request.get("wKey")
+            lKey = self.request.get("lKey")
             
             
-            if (category and ( not (winner and loser) ) ):
+            if (key and ( not (wKey and lKey) ) ):
                 #item_1 = Item.all().order('rand_num').filter('rand_num >=', rand_num).filter(k, value) .get()
+                key = db.Key(key)
+                parentCategory = Category.gql("WHERE __key__ = :1",key)
                 
-                items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",getCategoryKey(user.user_id(), category))
+               
+                categoryUser = key.parent().name()
+
+                items =  db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",getCategoryKey(categoryUser, parentCategory[0].name))
                 
+               
                 item_1 = "Not Enough Items"
                 item_2 = "Not Enough Items"                
                 
+               
                 if( items.count() != 0):
                     randomNumber_1 = random.randint(0,items.count() - 1 )
                     randomNumber_2 = randomNumber_1
@@ -126,26 +152,29 @@ class VotePage(webapp.RequestHandler):
                     while(randomNumber_1 == randomNumber_2):
                         randomNumber_2 = random.randint(0,items.count() - 1 )
                     
-                    item_1 = items[randomNumber_1].name
-                    item_2 = items[randomNumber_2].name
+                    item_1 = items[randomNumber_1]
+                    item_2 = items[randomNumber_2]
                     
-                              
                 template_values = {
                                     'item_1': item_1,
                                     'item_2': item_2,
-                                    'category':category,
+                                    'key':key,
                                    'logoutURL' : users.create_logout_url(self.request.uri)
                                    }
                 
                 path = os.path.join(os.path.dirname(__file__), './html/vote.html')
                 self.response.out.write(template.render(path, template_values))
             
-            elif (category and ( (winner and loser)  )):
-              
-                winningItem = Item.gql("WHERE name = :1 AND ANCESTOR IS :2",winner, getCategoryKey(user.user_id(), category) )[0]
+            elif (key and ( (wKey and lKey)  )):
                 
-                losingItem = Item.gql("WHERE name = :1 AND ANCESTOR IS :2",loser, getCategoryKey(user.user_id(), category) )[0]
+                key = db.Key(key)
+                wKey = db.Key(wKey)
+                lKey = db.Key(lKey)
+              
+                winningItem = Item.gql("WHERE __key__ = :1",wKey)[0]
+                losingItem = Item.gql("WHERE __key__ = :1",lKey)[0]
 
+                
                 winningItem.wins = winningItem.wins + 1
                 winningItem.put()
                 
@@ -154,14 +183,23 @@ class VotePage(webapp.RequestHandler):
                 
                 #self.redirect("./vote?category=%s", permanent=False)
                 
-                message = winner + ' wins over ' + loser
+                message = winningItem.name + ' wins over ' + losingItem.name
                 
                 #get 2 new random items
-                items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",getCategoryKey(user.user_id(), category))
+                key = self.request.get("key")
+                key = db.Key(key)
+                parentCategory = Category.gql("WHERE __key__ = :1",key)
                 
+               
+                categoryUser = key.parent().name()
+
+                items =  db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",getCategoryKey(categoryUser, parentCategory[0].name))
+                
+               
                 item_1 = "Not Enough Items"
                 item_2 = "Not Enough Items"                
                 
+               
                 if( items.count() != 0):
                     randomNumber_1 = random.randint(0,items.count() - 1 )
                     randomNumber_2 = randomNumber_1
@@ -169,16 +207,17 @@ class VotePage(webapp.RequestHandler):
                     while(randomNumber_1 == randomNumber_2):
                         randomNumber_2 = random.randint(0,items.count() - 1 )
                     
-                    item_1 = items[randomNumber_1].name
-                    item_2 = items[randomNumber_2].name
+                    item_1 = items[randomNumber_1]
+                    item_2 = items[randomNumber_2]
+
                     
                               
                 template_values = {
                                     'item_1': item_1,
                                     'item_2': item_2,
-                                    'category':category,
-                                   'logoutURL' : users.create_logout_url(self.request.uri),
-                                   'message' : message
+                                    'key':key,
+                                    'logoutURL' : users.create_logout_url(self.request.uri),
+                                    'message' : message
                                    }
                 
                 path = os.path.join(os.path.dirname(__file__), './html/vote.html')
@@ -187,8 +226,7 @@ class VotePage(webapp.RequestHandler):
                 
             
             else:
-                categories = db.GqlQuery("SELECT * FROM Category")
-                
+                categories = Category.all() 
                 template_values = {
                                    'categories': categories
                                    }
@@ -207,11 +245,17 @@ class ResultsPage(webapp.RequestHandler):
         user = users.get_current_user()
         
         if user:
-            category = self.request.get('category')
+            key = self.request.get('key')
             
-            if category:
+            if key:
                 #do something
-                items = Item.gql("WHERE ANCESTOR IS :1",getCategoryKey(user.user_id(), category))
+                key = db.Key(key)
+                parentCategory = Category.gql("WHERE __key__ = :1",key)
+                categoryUser = key.parent().name()
+                items =  db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",getCategoryKey(categoryUser, parentCategory[0].name))
+
+                
+#                items = Item.gql("WHERE ANCESTOR IS :1",getCategoryKey(user.email(), category))
                 template_values = {
                                    'items': items,
                                    'logoutURL' : users.create_logout_url(self.request.uri)

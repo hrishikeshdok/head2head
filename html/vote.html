@@ -24,7 +24,7 @@
 		
 				{% for category in categories %}
 				<li>
-		  			<a href="./vote?category={{ category.name }}">
+		  			<a href="./vote?category={{ category.name }}&key={{category.key}}">
 		    			{{ category.name }}
 		  			</a>
 		  		</li>
@@ -38,14 +38,14 @@
 			<ul id="voteItems">
 				
 				<li>
-		  			<a href="./vote?category={{ category }}&winner={{ item_1 }}&loser={{ item_2 }}">
-		    			{{ item_1 }}
+		  			<a href="./vote?wKey={{item_1.key}}&lKey={{item_2.key}}&key={{key}}">
+		    			{{ item_1.name }}
 		  			</a>
 		  		</li>
 		  		
 		  		<li>
-		  			<a href="./vote?category={{ category }}&winner={{ item_2 }}&loser={{ item_1 }}">
-		    			{{ item_2 }}
+		  			<a href="./vote?wKey={{item_2.key}}&lKey={{item_1.key}}&key={{key}}">
+		    			{{ item_2.name }}
 		  			</a>
 		  		</li>
 		
