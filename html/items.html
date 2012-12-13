@@ -1,0 +1,39 @@
+<html>
+<head>
+	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<title>Items</title>
+</head>
+<body>
+	<div id="main">
+		<div id="left">
+			<p><a href="./">Home</a></p><br/>
+			<p><a href="./categories">Categories</a></p><br/>
+			<p><a href="./vote">Vote</a></p><br/>
+			<p><a href="./results">Results</a></p><br/>
+		</div>
+		<div id="middle">
+		You chose {{ category }} <br/><br/>
+			<table border="1">
+			<tr><th>Item Name</th><th>Wins</th><th>Loses</th></tr>
+				{% for item in items %}
+				<tr>
+	  				<td>{{ item.name }}</td>
+	  				<td>{{ item.wins }}</td>
+	  				<td>{{ item.loses }}</td>
+	  			</tr>
+	  		{% endfor %}
+	  		</table>
+		</div>
+		<div id="right">
+		<a href="{{ logoutURL }}"> SignOut></a><br/><br/>
+		Add new item to <b>"{{category}}"</b>
+			<form action="./items?category={{ category }}" method="post">
+				Item Name :- <tr/><input type="text" name="item_name">
+				<br/>
+				<input type="Submit" value="Add" /> 
+			</form>
+		</div>
+		
+	</div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<html>
+<head>
+	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<title>Items</title>
+</head>
+<body>
+	<div id="main">
+		<div id="left">
+			<p><a href="./">Home</a></p><br/>
+			<p><a href="./categories">Categories</a></p><br/>
+			<p><a href="./vote">Vote</a></p><br/>
+			<p><a href="./results">Results</a></p><br/>
+		</div>
+		
+		<div id="middle">
+		
+		{% if message %}
+			<b>{{message}}</b>
+		{% endif %}
+		
+		{% if categories %}
+			<p>List of available categories :- <br/></p>
+			<ul id="listOfCategories">
+		
+				{% for category in categories %}
+				<li>
+		  			<a href="./results?category={{ category.name }}">
+		    			{{ category.name }}
+		  			</a>
+		  		</li>
+		  		{% endfor %}
+		
+			</ul>
+
+		{% else %}
+			{% if items  %}
+		
+			<table border="1">
+			<tr><th>Item Name</th><th>Wins</th><th>Loses</th></tr>
+				{% for item in items %}
+				<tr>
+	  				<td>{{ item.name }}</td>
+	  				<td>{{ item.wins }}</td>
+	  				<td>{{ item.loses }}</td>
+	  			</tr>
+	  		{% endfor %}
+	  		</table>
+			
+			{% endif %}
+		{% endif %}
+		</div>
+		
+		<div id="right">
+			<a href="{{ logoutURL }}"> SignOut></a><br/><br/>
+		</div>
+		
+	</div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<html>
+<head>
+	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<title>Categories</title>
+</head>
+<body>
+
+<div id="main">
+	<div id="left">
+			<p><a href="./">Home</a></p><br/>
+			<p><a href="./categories">Categories</a></p><br/>
+			<p><a href="./vote">Vote</a></p><br/>
+			<p><a href="./results">Results</a></p><br/>
+		</div>
+	<div id="middle">
+		<p>List of available categories :- <br/></p>
+		<ul id="listOfCategories">
+	
+			{% for category in categories %}
+			<li>
+	  			<a href="./items?category={{ category.name }}">
+	    			{{ category.name }}
+	  			</a>
+	  		</li>
+	  		{% endfor %}
+	
+		</ul>
+	</div>
+	<div id="right">
+	<a href="{{ logoutURL }}"> SignOut></a><br/><br/>
+		Add new Category
+			<form action="./categories" method="post">
+				Category Name :- <tr/><input type="text" name="category_name">
+				<br/>
+				<input type="Submit" value="Add" /> 
+			</form>
+		</div>
+</div>
+
+</body>
+</html>

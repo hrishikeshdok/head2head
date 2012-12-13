@@ -1,0 +1,22 @@
+<html>	
+<head>
+	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<title>Home</title>
+</head>
+<body>
+	<div id="main">
+	
+		<div id="left">
+			<p><a href="./">Home</a></p><br/>
+			<p><a href="./categories">Categories</a></p><br/>
+			<p><a href="./vote">Vote</a></p><br/>
+			<p><a href="./results">Results</a></p><br/>
+		</div>
+		<div id="middle">
+			<p>Hi, {{ user.nickname }} ! What's up?</p><tr/><a href="{{ logoutURL }}"> SignOut></a>
+			
+		</div>
+		
+	</div>
+</body>
+</html>
