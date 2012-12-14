@@ -13,6 +13,10 @@
 			<p><a href="./results">Results</a></p><br/>
 		</div>
 	<div id="middle">
+			{% if message %}
+			<p> {{message}} </p>
+			{% endif %}
+	
 		<p>List of available categories :- <br/></p>
 		<ul id="listOfCategories">
 	

@@ -4,6 +4,66 @@
 	<title>Items</title>
 </head>
 <body>
+
+<script>
+function openChangeCategoryPopup()
+{
+	var oldCategoryName = document.getElementById("categoryName").innerHTML
+	var newCategoryName=prompt("Please new name to your category.\nIf you wish to delete, enter empty string",oldCategoryName);
+	if(newCategoryName != null)
+	{
+		if (newCategoryName != "")
+		{
+			if(newCategoryName != oldCategoryName)
+			{
+				if(newCategoryName != "delete")
+				  window.location = "http://localhost:8080/items?category=" + oldCategoryName + "&newCategoryName=" + newCategoryName
+				else
+				  window.alert("Invalid Name")
+			}
+			else
+				window.alert("Same as previous")
+		}
+		else
+		{
+		var r=confirm("Are you sure?");
+			if (r==true)
+				window.location = "http://localhost:8080/items?category=" + oldCategoryName + "&newCategoryName=delete"
+		}
+	}
+	
+}
+
+function openChangeItemPopup(oldItemName)
+{
+	var category = document.getElementById("categoryName").innerHTML
+	var newItemName=prompt("Please new name to your Item.\nIf you wish to delete, enter empty string",oldItemName);
+	if(newItemName != null)
+	{
+		if (newItemName != "")
+		{
+			if(newItemName != oldItemName)
+			{
+				if(newItemName != "delete")
+				  window.location = "http://localhost:8080/items?category=" + category +"&oldItemName="+ oldItemName + "&newItemName=" + newItemName
+				else
+				  window.alert("Invalid Name")
+			}
+			else
+				window.alert("Same as previous")
+		}
+		else
+		{
+		var r=confirm("Are you sure?");
+			if (r==true)
+				window.location = "http://localhost:8080/items?category="+category+"&oldItemName="+oldItemName+"&newItemName=delete" 
+		}
+	}
+	
+}
+
+</script>
+
 	<div id="main">
 		<div id="left">
 			<p><a href="./">Home</a></p><br/>
@@ -12,12 +72,15 @@
 			<p><a href="./results">Results</a></p><br/>
 		</div>
 		<div id="middle">
-		You chose {{ category }} <br/><br/>
+		You chose <a href="Javascript:openChangeCategoryPopup()" id="categoryName">{{ category }}</a><br/><br/>
 			<table border="1">
 			<tr><th>Item Name</th><th>Wins</th><th>Loses</th></tr>
 				{% for item in items %}
 				<tr>
-	  				<td>{{ item.name }}</td>
+	  				<td>
+<!-- 	  				<a href="Javascript:openChangeItemPopup({{item.name}})">{{ item.name }} </a> -->
+	  				<a href="javascript:openChangeItemPopup('{{item.name}}')">{{ item.name }} </a>
+	  				</td>
 	  				<td>{{ item.wins }}</td>
 	  				<td>{{ item.loses }}</td>
 	  			</tr>
