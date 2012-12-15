@@ -27,7 +27,7 @@ class ResultsPage(webapp.RequestHandler):
                 key = db.Key(key)
                 parentCategory = Category.gql("WHERE __key__ = :1",key)
                 categoryUser = key.parent().name()
-                items =  db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",Helper.getCategoryKey(categoryUser, parentCategory[0].name))
+                items =  db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1 ORDER BY wins DESC",Helper.getCategoryKey(categoryUser, parentCategory[0].name))
 
                 
 #                items = Item.gql("WHERE ANCESTOR IS :1",getCategoryKey(user.email(), category))

@@ -88,6 +88,10 @@ function exportCategories(owner,category) {
 			</form>
 		</div>
 		
+			{% if message %}
+			<p> {{message}} </p>
+			{% endif %}
+		
 		You chose 
 		{% ifequal owner user.email %}
 			<a href="Javascript:openChangeCategoryPopup()" id="categoryName">{{ category }}</a>
@@ -115,7 +119,7 @@ function exportCategories(owner,category) {
 		</div>
 		<div id="right">
 			<div id="logout">
-				<a href="{{ logoutURL }}"> SignOut></a><br/><br/>
+				<a href="{{ logoutURL }}">Sign Out</a><br/><br/>
 			</div>
 			
 			{% ifequal owner user.email %}

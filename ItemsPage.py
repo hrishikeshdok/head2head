@@ -25,35 +25,40 @@ class ItemsPage(webapp.RequestHandler):
             category = self.request.get("category")
             owner = self.request.get("owner")
             
-            newCategoryName = self.request.get("newCategoryName")
+            newCategoryName = self.request.get("newCategoryName").strip()
             
-            newItemName = self.request.get("newItemName")
-            oldItemName = self.request.get("oldItemName")
+            newItemName = self.request.get("newItemName").strip()
+            oldItemName = self.request.get("oldItemName").strip()
             
             displayItems = True
           
             if newCategoryName:
                 owner = user.email()
                 if newCategoryName != "delete":
-                    newCategory = Category(parent=Helper.getUserKey(user.email()))
-                    newCategory.name = newCategoryName
-                    newCategory.put()
-                    
-                    items = Item.gql("WHERE ANCESTOR IS :1", Helper.getCategoryKey(user.email(), category))
-                    
-                    for item in items:
-                        newItem = Item(parent=Helper.getCategoryKey(user.email(), newCategory.name))
-                        newItem.name = item.name
-                        newItem.wins = item.wins
-                        newItem.loses = item.loses
-                        newItem.put()
-                        Item.delete(item)
-                    
-                    categoryToEdit =  Category.gql("WHERE name = :1 and ANCESTOR IS :2",category,Helper.getUserKey(user.email()))[0]
-                    Category.delete(categoryToEdit)
-
-                    message = category + " renamed to " + newCategoryName
-                    category = newCategoryName
+                    ifAlreadyExists = Category.gql("WHERE name = :1 and ANCESTOR IS :2",newCategoryName,Helper.getUserKey(user.email()))
+                    if ifAlreadyExists.count() == 0:
+                        newCategory = Category(parent=Helper.getUserKey(user.email()))
+                        newCategory.name = newCategoryName
+                        newCategory.put()
+                        
+                        items = Item.gql("WHERE ANCESTOR IS :1", Helper.getCategoryKey(user.email(), category))
+                        
+                        for item in items:
+                            newItem = Item(parent=Helper.getCategoryKey(user.email(), newCategory.name))
+                            newItem.name = item.name
+                            newItem.wins = item.wins
+                            newItem.loses = item.loses
+                            newItem.put()
+                            Item.delete(item)
+                        
+                        categoryToEdit =  Category.gql("WHERE name = :1 and ANCESTOR IS :2",category,Helper.getUserKey(user.email()))[0]
+                        Category.delete(categoryToEdit)
+    
+                        message = category + " renamed to " + newCategoryName
+                        category = newCategoryName
+                    else:
+                        message = "Category already exists"
+                        
                     displayItems = True
                     
                 else:
@@ -85,12 +90,16 @@ class ItemsPage(webapp.RequestHandler):
             if newItemName:
                 owner = user.email()
                 if newItemName != "delete":
-                    itemToEdit = Item.gql("WHERE name = :1 and ANCESTOR IS :2",oldItemName, Helper.getCategoryKey(user.email(), category))[0]
-                    itemToEdit.name = newItemName
-                    itemToEdit.wins = 0
-                    itemToEdit.loses = 0
-                    itemToEdit.put()
-                    message = oldItemName + " renamed to " + newItemName
+                    ifAlreadyExists = Item.gql("WHERE name = :1 and ANCESTOR IS :2",newItemName, Helper.getCategoryKey(user.email(), category))
+                    if ifAlreadyExists.count() == 0:
+                        itemToEdit = Item.gql("WHERE name = :1 and ANCESTOR IS :2",oldItemName, Helper.getCategoryKey(user.email(), category))[0]
+                        itemToEdit.name = newItemName
+                        itemToEdit.wins = 0
+                        itemToEdit.loses = 0
+                        itemToEdit.put()
+                        message = oldItemName + " renamed to " + newItemName
+                    else:
+                        message = "Item already exists"
                     displayItems = True
                 else:
                     itemToDelete = Item.gql("WHERE name = :1 and ANCESTOR IS :2",oldItemName, Helper.getCategoryKey(user.email(), category))[0]
@@ -140,7 +149,7 @@ class ItemsPage(webapp.RequestHandler):
     
     def post(self):
         user = users.get_current_user()
-        
+        message=""
         if user:
             category = self.request.get("category")
             isExport = self.request.get("isExport")
@@ -149,17 +158,27 @@ class ItemsPage(webapp.RequestHandler):
             if isExport:
                 self.exportToXml(owner,category)
             else:
-                item = Item(parent=Helper.getCategoryKey(user.email(), category))
-                item.name = self.request.get("item_name")
-                item.wins = 0
-                item.loses = 0
-                item.put()
+                newItemName = self.request.get("item_name").strip()
+                ifAlreadyExists  = Item.gql("WHERE name = :1 AND ANCESTOR IS :2",newItemName,Helper.getCategoryKey(user.email(), category))
+                
+                if (ifAlreadyExists.count() == 0) and newItemName:
+                    item = Item(parent=Helper.getCategoryKey(user.email(), category))
+                    item.name = self.request.get("item_name")
+                    item.wins = 0
+                    item.loses = 0
+                    item.put()
+                else:
+                    if newItemName:
+                        message = "Item already exists"
+                    else:
+                        message = "Item name cannot be empty or spaces"
                 
                 items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",Helper.getCategoryKey(user.email(), category))
                 
                 template_values = {
                                    'items' : items,
                                    'category' : category,
+                                   'message':message,
                                    'logoutURL' : users.create_logout_url('./')
                                    }
                 
