@@ -9,6 +9,7 @@ import ItemsPage
 import VotePage
 import ResultsPage
 import Search
+import Comments
 
 
 class MainPage(webapp.RequestHandler):
@@ -34,7 +35,9 @@ application = webapp.WSGIApplication([('/', MainPage),
                                       ('/items', ItemsPage.ItemsPage),
                                       ('/vote', VotePage.VotePage),
                                       ('/results', ResultsPage.ResultsPage),
-                                     ('/search', Search.SearchPage)]
+                                      ('/search', Search.SearchPage),
+                                      ('/showComments', Comments.ShowCommentsPage),
+                                      ('/addComment',Comments.AddCommentsPage)]
                                       ,debug=True)
 
 

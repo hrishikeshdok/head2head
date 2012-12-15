@@ -6,8 +6,7 @@
 <body>
 
 <script>
-function openChangeCategoryPopup()
-{
+function openChangeCategoryPopup(){
 	var oldCategoryName = document.getElementById("categoryName").innerHTML
 	var newCategoryName=prompt("Please new name to your category.\nIf you wish to delete, enter empty string",oldCategoryName);
 	if(newCategoryName != null)
@@ -17,7 +16,7 @@ function openChangeCategoryPopup()
 			if(newCategoryName != oldCategoryName)
 			{
 				if(newCategoryName != "delete")
-				  window.location = "http://localhost:8080/items?category=" + oldCategoryName + "&newCategoryName=" + newCategoryName
+				  window.location = "./items?category=" + oldCategoryName + "&newCategoryName=" + newCategoryName
 				else
 				  window.alert("Invalid Name")
 			}
@@ -28,14 +27,13 @@ function openChangeCategoryPopup()
 		{
 		var r=confirm("Are you sure?");
 			if (r==true)
-				window.location = "http://localhost:8080/items?category=" + oldCategoryName + "&newCategoryName=delete"
+				window.location = "./items?category=" + oldCategoryName + "&newCategoryName=delete"
 		}
 	}
 	
 }
 
-function openChangeItemPopup(oldItemName)
-{
+function openChangeItemPopup(oldItemName){
 	var category = document.getElementById("categoryName").innerHTML
 	var newItemName=prompt("Please new name to your Item.\nIf you wish to delete, enter empty string",oldItemName);
 	if(newItemName != null)
@@ -45,7 +43,7 @@ function openChangeItemPopup(oldItemName)
 			if(newItemName != oldItemName)
 			{
 				if(newItemName != "delete")
-				  window.location = "http://localhost:8080/items?category=" + category +"&oldItemName="+ oldItemName + "&newItemName=" + newItemName
+				  window.location = "./items?category=" + category +"&oldItemName="+ oldItemName + "&newItemName=" + newItemName
 				else
 				  window.alert("Invalid Name")
 			}
@@ -56,7 +54,7 @@ function openChangeItemPopup(oldItemName)
 		{
 		var r=confirm("Are you sure?");
 			if (r==true)
-				window.location = "http://localhost:8080/items?category="+category+"&oldItemName="+oldItemName+"&newItemName=delete" 
+				window.location = "./items?category="+category+"&oldItemName="+oldItemName+"&newItemName=delete" 
 		}
 	}
 	
@@ -68,6 +66,16 @@ function exportCategories(owner,category) {
 	document.getElementById('category').value = category
 	document.getElementById('isExport').value = true
 	document.forms['exportForm'].submit();
+}
+
+function addComment(itemName,categoryName,userEmail){
+	alert(itemName+" "+categoryName + " " +userEmail)
+	document.getElementById('itemName').value = itemName
+	document.getElementById('categoryName').value = categoryName
+	document.getElementById('userEmail').value = userEmail
+
+	document.forms['addCommentForm'].submit();
+	
 }
 
 </script>
@@ -94,12 +102,15 @@ function exportCategories(owner,category) {
 		
 		You chose 
 		{% ifequal owner user.email %}
-			<a href="Javascript:openChangeCategoryPopup()" id="categoryName">{{ category }}</a>
+			<b><a href="Javascript:openChangeCategoryPopup()" id="categoryName">{{ category }}</a></b>
 		{% else %}
-			{{ category }}
+			<b>{{ category }}</b>
 		{% endifequal %}
+		<br/>
+		<iframe src="//www.facebook.com/plugins/like.php?href=href=./items?category={{category}}&owner={{owner}}&layout=standard&show_faces=true&width=450&action=like&colorscheme=light&height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:330px; height:26px; padding-top:3px; padding-left:10px;" allowTransparency="true"></iframe>
 		
 		<br/><br/>
+		<form name="addCommentForm" action="./addComment" method="post">
 			<table border="1">
 			<tr><th>Item Name</th><th>Wins</th><th>Loses</th></tr>
 				{% for item in items %}
@@ -113,9 +124,19 @@ function exportCategories(owner,category) {
 	  				</td>
 	  				<td>{{ item.wins }}</td>
 	  				<td>{{ item.loses }}</td>
+	  				
+  					<td><input type="text" name="comment" value="" /></td>
+<!-- 	  				<td><input type="button" onClick="javascript:addComment('{{item.name}}','{{item.key.parent.name}}','{{user.email}}')" name="addComment" value="Comment"/></td> -->
+<td><input type="button" onClick="javascript:addComment('{{item.name}}','{{item.key.parent.name}}','{{user.email}}')"  name="Comment" value="Comment" />
+</td>
 	  			</tr>
 	  		{% endfor %}
 	  		</table>
+	  		<input type="hidden" name="itemName" id="itemName" value=""/>
+	  		<input type="hidden" name="categoryName" id="categoryName" value=""/>
+	  		<input type="hidden" name="userEmail" id="userEmail" value=""/>
+	  		<input type="hidden" name="owner" id="owner" value="{{ owner }}"/>
+	  	</form>
 		</div>
 		<div id="right">
 			<div id="logout">

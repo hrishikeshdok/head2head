@@ -8,7 +8,7 @@ from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
-from Helper import Helper, Category
+from Helper import Helper, Category, ItemComment
 from Helper import Item
 
 from xml.etree.ElementTree import Element, SubElement, tostring, XML, fromstring
@@ -115,7 +115,9 @@ class ItemsPage(webapp.RequestHandler):
                                    'owner': owner,
                                    'user' : user,
                                    'category' : category,
-                                   'logoutURL' : users.create_logout_url('./')
+                                   'logoutURL' : users.create_logout_url('./'),
+                                   'ItemComment':ItemComment,
+                                   'Helper':Helper
                                    }
                 path = os.path.join(os.path.dirname(__file__), './html/items.html')
                 self.response.out.write(template.render(path, template_values))

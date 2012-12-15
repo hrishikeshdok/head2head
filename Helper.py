@@ -13,6 +13,12 @@ class Item(db.Model):
     wins = db.IntegerProperty()
     loses = db.IntegerProperty()
 
+class ItemComment(db.Model):
+    category = db.StringProperty()
+    item = db.StringProperty()
+    comment = db.StringProperty()
+    commenter = db.StringProperty()
+
 
 class Helper:
     @staticmethod
@@ -22,3 +28,7 @@ class Helper:
     @staticmethod
     def getCategoryKey(userEmail,category):
         return db.Key.from_path('User', userEmail,'Category',category)
+    
+    @staticmethod
+    def getItemKey(userEmail,category,item):
+        return db.Key.from_path('User', userEmail,'Category',category,'Item',item)

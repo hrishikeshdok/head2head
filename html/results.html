@@ -4,6 +4,19 @@
 	<title>Items</title>
 </head>
 <body>
+<script>
+
+function showComments(itemName,categoryName,userEmail)
+{
+
+	document.getElementById('itemName').value = itemName
+	document.getElementById('categoryName').value = categoryName
+	document.getElementById('userEmail').value = userEmail
+
+	document.forms['itemResultsForm'].submit();	
+}
+
+</script>
 	<div id="main">
 		<div id="left">
 			<p><a href="./">Home</a></p><br/>
@@ -40,26 +53,42 @@
 
 		{% else %}
 			{% if items  %}
-		
+			
+			<form name="itemResultsForm" method="post" action="./showComments">		
 			<table border="1">
 			<tr><th>Item Name</th><th>Wins</th><th>Loses</th></tr>
 				{% for item in items %}
 				<tr>
-	  				<td>{{ item.name }}</td>
+	  				<td><a href="javascript:showComments('{{item.name}}','{{item.key.parent.name}}','{{item.key.parent.parent.name}}')">{{ item.name }}</a></td>
 	  				<td>{{ item.wins }}</td>
 	  				<td>{{ item.loses }}</td>
 	  			</tr>
 	  		{% endfor %}
 	  		</table>
-			
+	  		<input type="hidden" name="itemName" id="itemName" value=""/>
+	  		<input type="hidden" name="categoryName" id="categoryName" value=""/>
+	  		<input type="hidden" name="userEmail" id="userEmail" value=""/>
+			</form>
 			{% endif %}
+		{% endif %}
+		
+		<div id="showCommentsBox">
+		{% if comments %}
+		
+			
+				{% for comment in comments %}
+					{{ comment.commenter }}&nbsp said &nbsp <b>{{ comment.comment }}</b><br/>
+				{% endfor %}
+			
+		
 		{% endif %}
 		</div>
 		
-		<div id="right">
-			<a href="{{ logoutURL }}">Sign Out</a><br/><br/>
-		</div>
+		
 		
 	</div>
+	<div id="right">
+			<a href="{{ logoutURL }}">Sign Out</a><br/><br/>
+		</div>
 </body>
 </html>

@@ -27,3 +27,8 @@
 #footer {
     clear: both;
 }
+
+#middle.showCommentsBox{
+	height:100px; 
+	overflow:auto;
+}
