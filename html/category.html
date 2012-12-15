@@ -4,6 +4,15 @@
 	<title>Categories</title>
 </head>
 <body>
+<script>
+
+function importXML()
+{
+	document.getElementById("action").value="import"
+	document.forms['importForm'].submit()
+}
+
+</script>
 
 <div id="main">
 	<div id="left">
@@ -22,23 +31,34 @@
 	
 			{% for category in categories %}
 			<li>
-	  			<a href="./items?category={{ category.name }}">
-	    			{{ category.name }}
-	  			</a>
+	  			<a href="./items?category={{ category.name }}&owner={{category.key.parent.name}}">{{ category.name }}</a>
+	  			<tr/><font size="1" color="red">&nbsp&nbsp&nbsp&nbspowner = {{category.key.parent.name}}</font>
+	  			
 	  		</li>
 	  		{% endfor %}
 	
 		</ul>
 	</div>
 	<div id="right">
-	<a href="{{ logoutURL }}"> SignOut></a><br/><br/>
+		<div id="addNewCategory">
+		<a href="{{ logoutURL }}"> SignOut></a><br/><br/>
 		Add new Category
 			<form action="./categories" method="post">
-				Category Name :- <tr/><input type="text" name="category_name">
+				Category Name :- <tr/><input type="text" name="category_name"/>
 				<br/>
 				<input type="Submit" value="Add" /> 
 			</form>
 		</div>
+		
+		<div id="importCategory">
+		<p>Import Category from file</p>
+		<form name="importForm" method="post" action="./categories" enctype="multipart/form-data">
+			<input type="file" name="chooseFile" />
+			<input type="hidden" id="action" name="action" value=""/>
+			<br/><input type="button" onclick="javascript:importXML()" value="Import"/>	
+		</form>
+		</div>
+	</div>
 </div>
 
 </body>

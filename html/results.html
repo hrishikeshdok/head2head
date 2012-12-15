@@ -24,9 +24,8 @@
 		
 				{% for category in categories %}
 				<li>
-		  			<a href="./results?key={{ category.key }}">
-		    			{{ category.name }}
-		  			</a>
+		  			<a href="./results?key={{ category.key }}">{{ category.name }}</a>
+		  			<tr/><font size="1" color="red">&nbsp&nbsp&nbsp&nbsp owner = {{category.key.parent.name}}</font>
 		  		</li>
 		  		{% endfor %}
 		

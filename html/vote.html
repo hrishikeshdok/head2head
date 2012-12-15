@@ -24,9 +24,8 @@
 		
 				{% for category in categories %}
 				<li>
-		  			<a href="./vote?category={{ category.name }}&key={{category.key}}">
-		    			{{ category.name }}
-		  			</a>
+		  			<a href="./vote?category={{category.name}}&key={{category.key}}">{{category.name}}</a>
+		  			<tr/><font size="1" color="red">&nbsp&nbsp&nbsp&nbsp owner = {{category.key.parent.name}}</font>
 		  		</li>
 		  		{% endfor %}
 		
@@ -50,6 +49,8 @@
 		  		</li>
 		
 			</ul>
+			
+			<input type="button" onClick="window.location ='./vote?category={{category.name}}&key={{key}}' " value="Skip"/>
 			
 			{% endif %}
 		{% endif %}

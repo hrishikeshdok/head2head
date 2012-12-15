@@ -36,11 +36,13 @@ class VotePage(webapp.RequestHandler):
                 items =  db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",Helper.getCategoryKey(categoryUser, parentCategory[0].name))
                 
                
-                item_1 = "Not Enough Items"
-                item_2 = "Not Enough Items"                
+                                
                 
                
-                if( items.count() != 0):
+                if( items.count() >= 2):
+                    item_1 = "Not Enough Items"
+                    item_2 = "Not Enough Items"
+                    
                     randomNumber_1 = random.randint(0,items.count() - 1 )
                     randomNumber_2 = randomNumber_1
                      
@@ -50,12 +52,22 @@ class VotePage(webapp.RequestHandler):
                     item_1 = items[randomNumber_1]
                     item_2 = items[randomNumber_2]
                     
-                template_values = {
-                                    'item_1': item_1,
-                                    'item_2': item_2,
-                                    'key':key,
-                                   'logoutURL' : users.create_logout_url(self.request.uri)
-                                   }
+                    message="Click on one of the Items to vote"
+                    
+                    template_values = {
+                                        'item_1': item_1,
+                                        'item_2': item_2,
+                                        'message':message,
+                                        'key':key,
+                                       'logoutURL' : users.create_logout_url('./')
+                                       }
+                else:
+                    message = "Not enough items in this category. Choose another category."
+                    template_values = {
+                                        'message':message,
+                                        'key':key,
+                                       'logoutURL' : users.create_logout_url('./')
+                                       }
                 
                 path = os.path.join(os.path.dirname(__file__), './html/vote.html')
                 self.response.out.write(template.render(path, template_values))
@@ -111,7 +123,7 @@ class VotePage(webapp.RequestHandler):
                                     'item_1': item_1,
                                     'item_2': item_2,
                                     'key':key,
-                                    'logoutURL' : users.create_logout_url(self.request.uri),
+                                    'logoutURL' : users.create_logout_url('./'),
                                     'message' : message
                                    }
                 
@@ -123,7 +135,8 @@ class VotePage(webapp.RequestHandler):
             else:
                 categories = Category.all() 
                 template_values = {
-                                   'categories': categories
+                                   'categories': categories,
+                                   'logoutURL' : users.create_logout_url('./')
                                    }
                 
                 path = os.path.join(os.path.dirname(__file__), './html/vote.html')
@@ -131,5 +144,5 @@ class VotePage(webapp.RequestHandler):
                 
                 
         else:
-            self.redirect(users.create_login_url(self.request.uri))
+            self.redirect(users.create_login_url('./'))
             

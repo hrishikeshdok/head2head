@@ -11,6 +11,10 @@ from google.appengine.ext.webapp import template
 from Helper import Helper, Category
 from Helper import Item
 
+from xml.etree.ElementTree import Element, SubElement, tostring, XML, fromstring
+
+
+
 import os
 
 class ItemsPage(webapp.RequestHandler):
@@ -19,6 +23,8 @@ class ItemsPage(webapp.RequestHandler):
         if user:
             
             category = self.request.get("category")
+            owner = self.request.get("owner")
+            
             newCategoryName = self.request.get("newCategoryName")
             
             newItemName = self.request.get("newItemName")
@@ -27,6 +33,7 @@ class ItemsPage(webapp.RequestHandler):
             displayItems = True
           
             if newCategoryName:
+                owner = user.email()
                 if newCategoryName != "delete":
                     newCategory = Category(parent=Helper.getUserKey(user.email()))
                     newCategory.name = newCategoryName
@@ -61,13 +68,14 @@ class ItemsPage(webapp.RequestHandler):
                     message = category + " deleted " 
                     #self.redirect("./categories", permanent=False)
                     categories = db.GqlQuery("SELECT * "
-                                    "FROM Category "
-                                    "WHERE ANCESTOR IS :1",
-                                    Helper.getUserKey(user.email()))
+                                    "FROM Category ")
+#                                    "WHERE ANCESTOR IS :1",
+#                                    Helper.getUserKey(user.email()))
                     
                     template_values = {
                                        'categories' : categories,
-                                       'logoutURL' : users.create_logout_url(self.request.uri),
+                                       'user':user,
+                                       'logoutURL' : users.create_logout_url('./'),
                                        'message' : message
                                        }
                     displayItems = False
@@ -75,9 +83,12 @@ class ItemsPage(webapp.RequestHandler):
                     self.response.out.write(template.render(path, template_values))
                 
             if newItemName:
+                owner = user.email()
                 if newItemName != "delete":
                     itemToEdit = Item.gql("WHERE name = :1 and ANCESTOR IS :2",oldItemName, Helper.getCategoryKey(user.email(), category))[0]
                     itemToEdit.name = newItemName
+                    itemToEdit.wins = 0
+                    itemToEdit.loses = 0
                     itemToEdit.put()
                     message = oldItemName + " renamed to " + newItemName
                     displayItems = True
@@ -88,41 +99,74 @@ class ItemsPage(webapp.RequestHandler):
                     displayItems = True
             
             if displayItems:
-                items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",Helper.getCategoryKey(user.email(), category))
+                items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",Helper.getCategoryKey(owner, category))
                 
                 template_values = {
                                    'items' : items,
+                                   'owner': owner,
+                                   'user' : user,
                                    'category' : category,
-                                   'logoutURL' : users.create_logout_url(self.request.uri)
+                                   'logoutURL' : users.create_logout_url('./')
                                    }
                 path = os.path.join(os.path.dirname(__file__), './html/items.html')
                 self.response.out.write(template.render(path, template_values))
         else:
             self.redirect(users.create_login_url(self.request.uri))
         
+    
+    def exportToXml(self, owner, category):
+        self.response.headers['Content-Type'] = 'text/xml'
+        file_name = category.replace(' ', '_')
+        self.response.headers['Content-Disposition'] = "attachment; filename=" + str(file_name) + ".xml"
         
+        # create xml file        
+        # get all items in the chosen category
+        items = db.GqlQuery("SELECT * "
+                             "FROM Item "
+                             "WHERE ANCESTOR IS :1 ",
+                             Helper.getCategoryKey(owner, category))
+                                                    
+        root = Element('CATEGORY')
+        categoryName = SubElement(root, 'NAME')
+        categoryName.text = category
+        
+        # create intermediate nodes for each item
+        for item in items:
+            itemTag = SubElement(root, 'ITEM')
+            itemNameTag = SubElement(itemTag, 'NAME')
+            itemNameTag.text = item.name
+            
+        self.response.out.write(tostring(root, encoding="us-ascii", method="xml"))
+    
     def post(self):
         user = users.get_current_user()
         
         if user:
             category = self.request.get("category")
+            isExport = self.request.get("isExport")
+            owner = self.request.get("owner")
             
-            item = Item(parent=Helper.getCategoryKey(user.email(), category))
-            item.name = self.request.get("item_name")
-            item.wins = 0
-            item.loses = 0
-            item.put()
-            
-            items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",Helper.getCategoryKey(user.email(), category))
-            
-            template_values = {
-                               'items' : items,
-                               'category' : category,
-                               'logoutURL' : users.create_logout_url(self.request.uri)
-                               }
-            
-            path = os.path.join(os.path.dirname(__file__), './html/items.html')
-            self.response.out.write(template.render(path, template_values))
+            if isExport:
+                self.exportToXml(owner,category)
+            else:
+                item = Item(parent=Helper.getCategoryKey(user.email(), category))
+                item.name = self.request.get("item_name")
+                item.wins = 0
+                item.loses = 0
+                item.put()
+                
+                items = db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1",Helper.getCategoryKey(user.email(), category))
+                
+                template_values = {
+                                   'items' : items,
+                                   'category' : category,
+                                   'logoutURL' : users.create_logout_url('./')
+                                   }
+                
+                path = os.path.join(os.path.dirname(__file__), './html/items.html')
+                self.response.out.write(template.render(path, template_values))
         
         else:
             self.redirect(users.create_login_url(self.request.uri))
+        
+    

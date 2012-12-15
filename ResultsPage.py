@@ -33,14 +33,14 @@ class ResultsPage(webapp.RequestHandler):
 #                items = Item.gql("WHERE ANCESTOR IS :1",getCategoryKey(user.email(), category))
                 template_values = {
                                    'items': items,
-                                   'logoutURL' : users.create_logout_url(self.request.uri)
+                                   'logoutURL' : users.create_logout_url('./')
                                    }
             else:
                 categories = db.GqlQuery("SELECT * FROM Category")
                 
                 template_values = {
                                    'categories': categories,
-                                   'logoutURL' : users.create_logout_url(self.request.uri)
+                                   'logoutURL' : users.create_logout_url('./')
                                    }
                 
             path = os.path.join(os.path.dirname(__file__), './html/results.html')

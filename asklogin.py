@@ -33,7 +33,7 @@ application = webapp.WSGIApplication([('/', MainPage),
                                       ('/items', ItemsPage.ItemsPage),
                                       ('/vote', VotePage.VotePage),
                                       ('/results', ResultsPage.ResultsPage)]
-                                     , debug=True)
+                                      ,debug=True)
 
 
 def main():

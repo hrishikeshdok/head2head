@@ -62,6 +62,14 @@ function openChangeItemPopup(oldItemName)
 	
 }
 
+function exportCategories(owner,category) {
+	
+	document.getElementById('owner').value = owner
+	document.getElementById('category').value = category
+	document.getElementById('isExport').value = true
+	document.forms['exportForm'].submit();
+}
+
 </script>
 
 	<div id="main">
@@ -72,14 +80,24 @@ function openChangeItemPopup(oldItemName)
 			<p><a href="./results">Results</a></p><br/>
 		</div>
 		<div id="middle">
-		You chose <a href="Javascript:openChangeCategoryPopup()" id="categoryName">{{ category }}</a><br/><br/>
+		You chose 
+		{% ifequal owner user.email %}
+			<a href="Javascript:openChangeCategoryPopup()" id="categoryName">{{ category }}</a>
+		{% else %}
+			{{ category }}
+		{% endifequal %}
+		
+		<br/><br/>
 			<table border="1">
 			<tr><th>Item Name</th><th>Wins</th><th>Loses</th></tr>
 				{% for item in items %}
 				<tr>
 	  				<td>
-<!-- 	  				<a href="Javascript:openChangeItemPopup({{item.name}})">{{ item.name }} </a> -->
-	  				<a href="javascript:openChangeItemPopup('{{item.name}}')">{{ item.name }} </a>
+	  						{% ifequal owner user.email %}
+								<a href="javascript:openChangeItemPopup('{{item.name}}')">{{ item.name }} </a>
+							{% else %}
+								{{ item.name }}
+							{% endifequal %}
 	  				</td>
 	  				<td>{{ item.wins }}</td>
 	  				<td>{{ item.loses }}</td>
@@ -88,13 +106,35 @@ function openChangeItemPopup(oldItemName)
 	  		</table>
 		</div>
 		<div id="right">
-		<a href="{{ logoutURL }}"> SignOut></a><br/><br/>
-		Add new item to <b>"{{category}}"</b>
-			<form action="./items?category={{ category }}" method="post">
-				Item Name :- <tr/><input type="text" name="item_name">
-				<br/>
-				<input type="Submit" value="Add" /> 
-			</form>
+			<div id="logout">
+				<a href="{{ logoutURL }}"> SignOut></a><br/><br/>
+			</div>
+			
+			{% ifequal owner user.email %}
+	
+				<div id="addCategory">
+					<hr/>
+					Add new item to <b>"{{category}}"</b>
+						<form action="./items?category={{ category }}" method="post">
+							Item Name :- <tr/><input type="text" name="item_name">
+							<br/>
+							<input type="Submit" value="Add" /> 
+						</form>
+				</div>
+			
+			{% endifequal %}
+			
+			<div id="export">
+				<hr/>
+				<form action="./items" method="post" name="exportForm">
+					<input type="hidden" id="owner" name="owner" value=""/>
+					<input type="hidden" id="category" name="category" value=""/>
+					<input type="hidden" id="isExport" name="isExport" value=""/>
+					
+					<input type="button" onClick="javascript:exportCategories('{{owner}}','{{category}}')"  name="exportCategory" value="Export {{category}} to xml" />
+				</form>
+			</div>
+			
 		</div>
 		
 	</div>
