@@ -80,6 +80,14 @@ function exportCategories(owner,category) {
 			<p><a href="./results">Results</a></p><br/>
 		</div>
 		<div id="middle">
+		
+		<div id="search">
+			<form id="searchForm" name="searchForm" action="./search" method="post">
+				<input type="text" id="searchBox" name="searchBox"/>
+				<input type="submit" value="search">
+			</form>
+		</div>
+		
 		You chose 
 		{% ifequal owner user.email %}
 			<a href="Javascript:openChangeCategoryPopup()" id="categoryName">{{ category }}</a>

@@ -1,4 +1,29 @@
-#main {bgcolor: #fff;}
-#left {float: left; width: 25%;margin-left: 12;}
-#middle {float: none; width: 50%;}
+/*#main {bgcolor: #fff;}
+#left {float: left; width: 25%;}
+#middle {float: center; width: 50%;}
 #right {float: right; width: 25%;}
+*/
+
+#main {
+    width: 960px;
+    margin: 0 auto;
+}
+
+#left {
+    float: left;
+    width: 240px;
+}
+
+#middle {
+    float: left;
+    width: 480px;
+}
+
+#right {
+    float: left;
+    width: 240px;
+}
+
+#footer {
+    clear: both;
+}

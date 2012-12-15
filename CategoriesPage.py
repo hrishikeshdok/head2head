@@ -10,9 +10,6 @@ from Helper import Item
 
 import os
 from xml.etree import ElementTree as ET
-from xml import etree
-
-
 
 
 class CategoriesPage(webapp.RequestHandler):
@@ -42,15 +39,15 @@ class CategoriesPage(webapp.RequestHandler):
                 if inputXML:
                     try:
                         root = ET.fromstring(inputXML)
-
+                        
                         if root is not None:
                             cat = root.find('NAME')
                             
                             if cat is not None:
                                 category = Category.gql("WHERE name = :1 and ANCESTOR IS :2", cat.text ,Helper.getUserKey(user.email()))
-                                #
+                                
                                 if category.count() == 0:
-                                    self.response.out.write("Cat doesnt exist. Creating new category and adding all new items")
+                                    self.response.out.write( "Cat doesnt exist. Creating new category and adding all new items")
                                     category = Category(parent=Helper.getUserKey(user.email()))
                                     category.name = cat.text
                                     category.put()
@@ -59,12 +56,15 @@ class CategoriesPage(webapp.RequestHandler):
                                         itemName = item.find('NAME').text
                                         newItem = Item(parent=Helper.getCategoryKey(user.email(), category.name))
                                         newItem.name = itemName
+                                        newItem.wins = 0
+                                        newItem.loses = 0 
                                         newItem.put()
                                 else:
                                     category = category[0]
-                                    self.response.out.write("Category already exists<br/>")
+                                    self.response.out.write("<br/>Category already exists<br/>")
                                     #check for new items in XML and add them in datastore
                                     itemsInXml = []
+                                    itemsSaved = []
                                     for item in root.findall('ITEM'):
                                         itemName = item.find('NAME').text
                                         self.response.out.write("Checking for Item "+itemName + "<br/>")
@@ -74,8 +74,10 @@ class CategoriesPage(webapp.RequestHandler):
                                             self.response.out.write("Item "+ itemName+ " doesnot exist. Adding it<br/>")
                                             newItem = Item(parent=Helper.getCategoryKey(user.email(), category.name))
                                             newItem.name = itemName
+                                            newItem.wins = 0
+                                            newItem.loses = 0
                                             newItem.put()
-                                            
+                                        itemsSaved.append(item)
                                         itemsInXml.append(itemName)
                                             
                                     #check for items in Datastore that are not in XML. Delete them
@@ -100,6 +102,19 @@ class CategoriesPage(webapp.RequestHandler):
                 else:
                     y=2
                     self.response.out.write("Please choose file")
+                
+                
+                categories = db.GqlQuery("SELECT * "
+                                    "FROM Category ")
+                #message = "invalid xml"
+                template_values = {
+                    'categories': categories,
+                    'user':user,
+                    'logoutURL' : users.create_logout_url('./')
+                            }
+                path = os.path.join(os.path.dirname(__file__), './html/category.html')
+                self.response.out.write(template.render(path, template_values))
+                
                 #self.redirect('./categories', permanent=False)
             else:
                 category = Category(parent=Helper.getUserKey(user.email()))

@@ -8,6 +8,7 @@ import CategoriesPage
 import ItemsPage
 import VotePage
 import ResultsPage
+import Search
 
 
 class MainPage(webapp.RequestHandler):
@@ -32,7 +33,8 @@ application = webapp.WSGIApplication([('/', MainPage),
                                       ('/categories', CategoriesPage.CategoriesPage),
                                       ('/items', ItemsPage.ItemsPage),
                                       ('/vote', VotePage.VotePage),
-                                      ('/results', ResultsPage.ResultsPage)]
+                                      ('/results', ResultsPage.ResultsPage),
+                                     ('/search', Search.SearchPage)]
                                       ,debug=True)
 
 

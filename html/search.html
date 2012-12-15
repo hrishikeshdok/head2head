@@ -1,0 +1,64 @@
+<html>	
+<head>
+	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<title>Home</title>
+</head>
+<body>
+	<div id="main">
+	
+		<div id="left">
+			<p><a href="./">Home</a></p><br/>
+			<p><a href="./categories">Categories</a></p><br/>
+			<p><a href="./vote">Vote</a></p><br/>
+			<p><a href="./results">Results</a></p><br/>
+		</div>
+		<div id="middle">
+		
+		<div id="search">
+			<form id="searchForm" name="searchForm" action="./search" method="post">
+				<input type="text" id="searchBox" name="searchBox"/>
+				<input type="submit" value="search">
+			</form>
+		</div>
+		
+		
+			<div id="searchResult">
+			{% if searchFound %}
+				{% if matchedCategories %}
+					<br/>Search results for {{searchItem}} :-<br/>
+					<div id="categorySearchResults">
+					<br/>Matched Categories are :- <br/><br/>
+					{% for matchedCategory in matchedCategories %}
+
+						<a href="./items?category={{matchedCategory.name}}&owner={{matchedCategory.key.parent.name}}">{{matchedCategory.name}}</a>
+						<br/>
+					
+					{% endfor %}	
+					</div>
+				{% endif %}
+				
+				{% if matchedItems %}
+					<div id="itemSearchResults">
+					<br/>Matched Items are :- <br/><br/>
+					{% for matchedItem in matchedItems %}
+					<a href="./items?category={{matchedItem.key.parent.name}}&owner={{matchedItem.key.parent.parent.name}}">{{matchedItem.name}}</a>
+					<br/>
+					{% endfor %}
+					
+					</div>
+				{% endif %}
+			{% else %}
+				No results found.
+			{% endif %}
+			</div>
+
+		</div>
+
+		<div id="right">
+			<div id="logout">
+				<a href="{{ logoutURL }}"> SignOut></a><br/><br/>
+			</div>
+		</div>		
+	</div>
+</body>
+</html>
