@@ -34,12 +34,14 @@ function showComments(itemName,categoryName,userEmail)
 			</form>
 		</div>
 		
-		{% if message %}
-			<b>{{message}}</b>
-		{% endif %}
+		<div id="errorMessage">
+			{% if message %}
+				<b>{{message}}</b>
+			{% endif %}
+		</div>
 		
 		{% if categories %}
-			<p>List of available categories :- <br/></p>
+			<p>Available categories :- <br/></p>
 			<ul id="listOfCategories">
 		
 				{% for category in categories %}
@@ -52,7 +54,7 @@ function showComments(itemName,categoryName,userEmail)
 			</ul>
 
 		{% else %}
-			{% if items  %}
+			{% if items.count  %}
 			
 			<form name="itemResultsForm" method="post" action="./showComments">		
 			<table border="1">
@@ -69,6 +71,10 @@ function showComments(itemName,categoryName,userEmail)
 	  		<input type="hidden" name="categoryName" id="categoryName" value=""/>
 	  		<input type="hidden" name="userEmail" id="userEmail" value=""/>
 			</form>
+			
+			{% else%}
+			
+			No voting results for this Category
 			{% endif %}
 		{% endif %}
 		

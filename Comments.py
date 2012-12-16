@@ -52,6 +52,9 @@ class AddCommentsPage(webapp.RequestHandler):
         comment = str(comment).strip()
         message = ""
         if comment:
+            ifAlreadyExists = []
+            
+            #self.response.out.write("Key is "+ str(Helper.getItemKey(userEmail, categoryName, itemName)))
             ifAlreadyExists = ItemComment.gql("WHERE ANCESTOR IS :1",Helper.getItemKey(userEmail, categoryName, itemName))
             
             #self.response.out.write("Key is "+ str(Helper.getItemKey(userEmail, categoryName, itemName)))

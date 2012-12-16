@@ -30,7 +30,8 @@ class CategoriesPage(webapp.RequestHandler):
             self.response.out.write(template.render(path, template_values))
         else:
             self.redirect(users.create_login_url(self.request.uri))
-        
+    
+    ## Post method for import xml action
     def post(self):
         user = users.get_current_user()
         action = self.request.get("action")
@@ -55,8 +56,8 @@ class CategoriesPage(webapp.RequestHandler):
                                     category.put()
                                     
                                     for item in root.findall('ITEM'):
-                                        if len(item.findall('NAME')) == 1 and (item.find('NAME').text):
-                                            itemName = item.find('NAME').text
+                                        if len(item.findall('NAME')) == 1 and (item.find('NAME').text.strip()):
+                                            itemName = item.find('NAME').text.strip()
                                             newItem = Item(parent=Helper.getCategoryKey(user.email(), category.name))
                                             newItem.name = itemName
                                             newItem.wins = 0
@@ -75,8 +76,8 @@ class CategoriesPage(webapp.RequestHandler):
                                     escape = False
                                     for item in root.findall('ITEM'):
                                         #check if there are more than one Item names
-                                        if (len(item.findall('NAME')) == 1) and (item.find('NAME').text):
-                                            itemName = item.find('NAME').text
+                                        if (len(item.findall('NAME')) == 1) and (item.find('NAME').text.strip()):
+                                            itemName = item.find('NAME').text.strip()
                                             #self.response.out.write("Checking for Item "+itemName + "<br/>")
                                             newItem = Item.gql("WHERE name = :1 AND ANCESTOR IS :2",itemName,Helper.getCategoryKey(user.email(), category.name))
                                             #self.response.out.write("Count " + str(newItem.count()) +"<br/>")
@@ -103,7 +104,7 @@ class CategoriesPage(webapp.RequestHandler):
                                         #items = Item.all()
                                         items = Item.gql("WHERE ANCESTOR IS :1",Helper.getCategoryKey(user.email(), category.name))
                                         for item in items:
-                                            self.response.out.write("Checking for  "+ item.name + " in XML <br/>")
+                                            #self.response.out.write("Checking for  "+ item.name + " in XML <br/>")
                                             try:
                                                 itemsInXml.remove(item.name)
     #                                            self.response.out.write(item.name + " is there in XML. Retain it <br/>")

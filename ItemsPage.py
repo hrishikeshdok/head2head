@@ -180,8 +180,10 @@ class ItemsPage(webapp.RequestHandler):
                 template_values = {
                                    'items' : items,
                                    'category' : category,
-                                   'message':message,
-                                   'logoutURL' : users.create_logout_url('./')
+                                   'message' : message,
+                                   'logoutURL' : users.create_logout_url('./'),
+                                   'user':user,
+                                   'owner' : owner
                                    }
                 
                 path = os.path.join(os.path.dirname(__file__), './html/items.html')

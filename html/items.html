@@ -62,21 +62,36 @@ function openChangeItemPopup(oldItemName){
 
 function exportCategories(owner,category) {
 	
+	
+	
 	document.getElementById('owner').value = owner
 	document.getElementById('category').value = category
 	document.getElementById('isExport').value = true
 	document.forms['exportForm'].submit();
 }
 
-function addComment(itemName,categoryName,userEmail){
-	alert(itemName+" "+categoryName + " " +userEmail)
-	document.getElementById('itemName').value = itemName
-	document.getElementById('categoryName').value = categoryName
-	document.getElementById('userEmail').value = userEmail
-
-	document.forms['addCommentForm'].submit();
+function addComment(itemName,categoryName,userEmail,obj){
 	
+	var par=obj.parentNode; 
+	while(par.nodeName.toLowerCase()!='tr'){ 
+	par=par.parentNode; 
+	} 
+	 
+	
+			//
+			//var txtCommentIndex = ((par.rowIndex-1)/2) | 0
+			var txtCommentIndex =  parseInt(((par.rowIndex-1)/2), 10)
+			//alert(txtCommentIndex);
+			
+			document.getElementById('comment').value = document.getElementsByName("txtComment")[txtCommentIndex].value
+			document.getElementById('itemName').value = itemName
+			document.getElementById('categoryName').value = categoryName
+			document.getElementById('userEmail').value = userEmail
+	
+			document.forms['addCommentForm'].submit();
+
 }
+
 
 </script>
 
@@ -95,21 +110,25 @@ function addComment(itemName,categoryName,userEmail){
 				<input type="submit" value="search">
 			</form>
 		</div>
-		
-			{% if message %}
-			<p> {{message}} </p>
-			{% endif %}
-		
+
 		You chose 
 		{% ifequal owner user.email %}
-			<b><a href="Javascript:openChangeCategoryPopup()" id="categoryName">{{ category }}</a></b>
+			<b><a href="Javascript:openChangeCategoryPopup()" >{{ category }}</a></b>
 		{% else %}
 			<b>{{ category }}</b>
 		{% endifequal %}
+		
+		<div id="errorMessage">
+		<br/>
+				{% if message %}
+					<b>{{message}}</b>
+				{% endif %}
+			</div>
 		<br/>
 		<iframe src="//www.facebook.com/plugins/like.php?href=href=./items?category={{category}}&owner={{owner}}&layout=standard&show_faces=true&width=450&action=like&colorscheme=light&height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:330px; height:26px; padding-top:3px; padding-left:10px;" allowTransparency="true"></iframe>
 		
 		<br/><br/>
+		{% if items.count  %}
 		<form name="addCommentForm" action="./addComment" method="post">
 			<table border="1">
 			<tr><th>Item Name</th><th>Wins</th><th>Loses</th></tr>
@@ -125,18 +144,23 @@ function addComment(itemName,categoryName,userEmail){
 	  				<td>{{ item.wins }}</td>
 	  				<td>{{ item.loses }}</td>
 	  				
-  					<td><input type="text" name="comment" value="" /></td>
-<!-- 	  				<td><input type="button" onClick="javascript:addComment('{{item.name}}','{{item.key.parent.name}}','{{user.email}}')" name="addComment" value="Comment"/></td> -->
-<td><input type="button" onClick="javascript:addComment('{{item.name}}','{{item.key.parent.name}}','{{user.email}}')"  name="Comment" value="Comment" />
-</td>
+  					<tr><td colspan="3">
+  					<input type="text" name="txtComment" size="25" value="" />
+					<input type="button" onClick="javascript:addComment('{{item.name}}','{{item.key.parent.name}}','{{user.email}}',this)"  name="btnComment" value="Comment" />
+					</td></tr>
 	  			</tr>
 	  		{% endfor %}
 	  		</table>
 	  		<input type="hidden" name="itemName" id="itemName" value=""/>
 	  		<input type="hidden" name="categoryName" id="categoryName" value=""/>
 	  		<input type="hidden" name="userEmail" id="userEmail" value=""/>
+	  		<input type="hidden" name="comment" id="comment" value=""/>
 	  		<input type="hidden" name="owner" id="owner" value="{{ owner }}"/>
 	  	</form>
+	  	{% else%}
+			
+			No items in Category. Please add some.
+			{% endif %}
 		</div>
 		<div id="right">
 			<div id="logout">
@@ -148,7 +172,7 @@ function addComment(itemName,categoryName,userEmail){
 				<div id="addCategory">
 					<hr/>
 					Add new item to <b>"{{category}}"</b>
-						<form action="./items?category={{ category }}" method="post">
+						<form action="./items?category={{ category }}&owner={{owner}}" method="post">
 							Item Name :- <tr/><input type="text" name="item_name">
 							<br/>
 							<input type="Submit" value="Add" /> 
@@ -159,7 +183,7 @@ function addComment(itemName,categoryName,userEmail){
 			
 			<div id="export">
 				<hr/>
-				<form action="./items" method="post" name="exportForm">
+				<form action="./items?category={{category}}&owner={{owner}}" method="post" name="exportForm">
 					<input type="hidden" id="owner" name="owner" value=""/>
 					<input type="hidden" id="category" name="category" value=""/>
 					<input type="hidden" id="isExport" name="isExport" value=""/>

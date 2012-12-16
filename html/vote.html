@@ -21,13 +21,14 @@
 			</form>
 		</div>
 		
-		
+		<div id="errorMessage">
 		{% if message %}
 			<b>{{message}}</b>
 		{% endif %}
+		</div>
 		
 		{% if categories %}
-			<p>List of available categories :- <br/></p>
+			<p>Available categories :- <br/></p>
 			<ul id="listOfCategories">
 		
 				{% for category in categories %}
