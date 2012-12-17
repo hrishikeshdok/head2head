@@ -18,7 +18,7 @@ function openChangeCategoryPopup(){
 			if(newCategoryName != oldCategoryName)
 			{
 				if(newCategoryName != "delete")
-				  window.location = "./items?category=" + oldCategoryName + "&newCategoryName=" + newCategoryName
+				  window.location = "/items?category=" + oldCategoryName + "&newCategoryName=" + newCategoryName
 				else
 				  window.alert("Invalid Name")
 			}
@@ -29,7 +29,7 @@ function openChangeCategoryPopup(){
 		{
 		var r=confirm("Are you sure?");
 			if (r==true)
-				window.location = "./items?category=" + oldCategoryName + "&newCategoryName=delete"
+				window.location = "/items?category=" + oldCategoryName + "&newCategoryName=delete"
 		}
 	}
 	
@@ -45,7 +45,7 @@ function openChangeItemPopup(oldItemName){
 			if(newItemName != oldItemName)
 			{
 				if(newItemName != "delete")
-				  window.location = "./items?category=" + category +"&oldItemName="+ oldItemName + "&newItemName=" + newItemName
+				  window.location = "/items?category=" + category +"&oldItemName="+ oldItemName + "&newItemName=" + newItemName
 				else
 				  window.alert("Invalid Name")
 			}
@@ -56,7 +56,7 @@ function openChangeItemPopup(oldItemName){
 		{
 		var r=confirm("Are you sure?");
 			if (r==true)
-				window.location = "./items?category="+category+"&oldItemName="+oldItemName+"&newItemName=delete" 
+				window.location = "/items?category="+category+"&oldItemName="+oldItemName+"&newItemName=delete" 
 		}
 	}
 	
@@ -94,32 +94,22 @@ function addComment(itemName,categoryName,userEmail,obj){
 
 }
 
-function doSubmit()
-{
- 	//alert("hi")
-// 	if (document.getElementById('comment').value != "" && 
-// 		document.getElementById('itemName').value != ""&& 
-// 		document.getElementById('categoryName').value != ""  && 
-// 		document.getElementById('userEmail').value != "" )
-// 		return true
-// 	else
-		return false		
-}
 
 
 </script>
 
 	<div id="main">
 		<div id="left">
-			<p><a href="./">Home</a></p><br/>
-			<p><a href="./categories">Categories</a></p><br/>
-			<p><a href="./vote">Vote</a></p><br/>
-			<p><a href="./results">Results</a></p><br/>
+			<p><a href="/">Home</a></p><br/>
+			<p><a href="/categories">Categories</a></p><br/>
+			<p><a href="/vote">Vote</a></p><br/>
+			<p><a href="/results">Results</a></p><br/>
+			<p><a href="/static/help.html">Help</a></p><br/>
 		</div>
 		<div id="middle">
 		
 		<div id="search">
-			<form id="searchForm" name="searchForm" action="./search" method="post">
+			<form id="searchForm" name="searchForm" action="/search" method="post">
 				<input type="text" id="searchBox" name="searchBox"/>
 				<input type="submit" value="search">
 			</form>
@@ -137,7 +127,7 @@ function doSubmit()
 		{% endifequal %}
 
 		<br/>		
-		<iframe src="//www.facebook.com/plugins/like.php?href=./items?category={{category}}&owner={{owner}}&layout=standard&show_faces=true&width=450&action=like&colorscheme=light&height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:330px; height:26px; padding-top:3px; padding-left:10px;" allowTransparency="true"></iframe>
+		<iframe src="//www.facebook.com/plugins/like.php?href=/items?category={{category}}&owner={{owner}}&layout=standard&show_faces=true&width=450&action=like&colorscheme=light&height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:330px; height:26px; padding-top:3px; padding-left:10px;" allowTransparency="true"></iframe>
 		
 		
 		<div id="errorMessage">
@@ -150,20 +140,21 @@ function doSubmit()
 		
 		<br/><br/>
 		{% if items.count  %}
-		<form name="addCommentForm" action="./addComment" method="post" onsubmit="if(document.getElementById('itemName').value != ''){return true;}else{return false;}">
+		<form name="addCommentForm" action="/addComment" method="post" onsubmit="if(document.getElementById('itemName').value != ''){return true;}else{return false;}">
 			<table border="1">
-			<tr><th>Item Name</th><th>Wins</th><th>Loses</th></tr>
+			<tr><th colspan="3">Item Name</th></tr>
 				{% for item in items %}
 				<tr>
-	  				<td>
+	  				<td colspan="3">
 	  						{% ifequal owner user.email %}
 								<a href="javascript:openChangeItemPopup('{{item.name}}')">{{ item.name }} </a>
 							{% else %}
 								{{ item.name }}
 							{% endifequal %}
 	  				</td>
-	  				<td>{{ item.wins }}</td>
-	  				<td>{{ item.loses }}</td>
+<!-- 	  				<td></td> -->
+<!-- 	  				<td></td> -->
+<!-- 	  				{{ item.wins }}{{ item.loses }} -->
 	  				
   					<tr><td colspan="3">
   					<input type="text" name="txtComment" size="25" value="" />
@@ -193,7 +184,7 @@ function doSubmit()
 				<div id="addCategory">
 					
 					Add new item to <b>"{{category}}"</b>
-						<form action="./items?category={{ category }}&owner={{owner}}" method="post">
+						<form action="/items?category={{ category }}&owner={{owner}}" method="post">
 							Item Name :- <tr/><input type="text" name="item_name">
 							<br/>
 							<input type="Submit" value="Add" /> 
@@ -205,7 +196,7 @@ function doSubmit()
 			
 			<div id="export">
 				
-				<form action="./items?category={{category}}&owner={{owner}}" method="post" name="exportForm">
+				<form action="/items?category={{category}}&owner={{owner}}" method="post" name="exportForm">
 					<input type="hidden" id="owner" name="owner" value=""/>
 					<input type="hidden" id="category" name="category" value=""/>
 					<input type="hidden" id="isExport" name="isExport" value=""/>
