@@ -21,7 +21,6 @@ class ShowCommentsPage(webapp.RequestHandler):
         categoryName = self.request.get("categoryName")
         userEmail = self.request.get("userEmail")
         
-#        comments = ItemComment.gql("WHERE ANCESTOR IS :1",Helper.getItemKey(userEmail, categoryName, itemName))
         comments = ItemComment.all()
         commentsList = []
         for comment in comments:
