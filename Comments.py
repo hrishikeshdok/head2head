@@ -13,7 +13,6 @@ from Helper import Category
 from Helper import Item
 from Helper import ItemComment
 
-import re
 import os
 
 class ShowCommentsPage(webapp.RequestHandler):
@@ -29,9 +28,8 @@ class ShowCommentsPage(webapp.RequestHandler):
             if (comment.category == categoryName) and (comment.item == itemName): 
                 commentsList.append(comment)
         
-        items = Item.gql("WHERE ANCESTOR IS :1",Helper.getCategoryKey(userEmail, categoryName))
-        
-        
+       
+        items =  db.GqlQuery("SELECT * FROM Item WHERE ANCESTOR IS :1 ORDER BY wins DESC",Helper.getCategoryKey(userEmail, categoryName))
         
         template_values = {
                            'items': items,
