@@ -1,9 +1,12 @@
 <html>
 <head>
+	<link rel="icon" type="image/gif" href="/img/icon.gif">
 	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
 	<title>Categories</title>
 </head>
 <body>
+
+
 <script>
 
 function importXML()
@@ -26,8 +29,12 @@ function importXML()
 		<div id="search">
 			<form id="searchForm" name="searchForm" action="./search" method="post">
 				<input type="text" id="searchBox" name="searchBox"/>
-				<input type="submit" value="search">
+				<input type="submit" value="search" id="searchButton">
 			</form>
+		</div>
+		
+		<div id="titleMessage">
+		<h2>Showing Categories</h1>
 		</div>
 	
 			<div id="errorMessage">
@@ -42,7 +49,7 @@ function importXML()
 			{% for category in categories %}
 			<li>
 	  			<a href="./items?category={{ category.name }}&owner={{category.key.parent.name}}">{{ category.name }}</a>
-	  			<tr/><font size="1" color="red">&nbsp&nbsp&nbsp&nbspowner = {{category.key.parent.name}}</font>
+	  			<tr/><font size="1" color="red">&nbsp&nbsp&nbsp&nbsp Created by {{category.key.parent.name}}</font>
 	  			
 	  		</li>
 	  		{% endfor %}
@@ -50,8 +57,10 @@ function importXML()
 		</ul>
 	</div>
 	<div id="right">
+	<a href="{{ logoutURL }}">Sign Out</a><br/><br/>
+	
 		<div id="addNewCategory">
-		<a href="{{ logoutURL }}">Sign Out</a><br/><br/>
+		<hr/>	
 		Add new Category
 			<form action="./categories" method="post">
 				Category Name :- <tr/><input type="text" name="category_name"/>
@@ -61,6 +70,7 @@ function importXML()
 		</div>
 		
 		<div id="importCategory">
+		<hr/>
 		<p>Import Category from file</p>
 		<form name="importForm" method="post" action="./categories" enctype="multipart/form-data">
 			<input type="file" name="chooseFile" />

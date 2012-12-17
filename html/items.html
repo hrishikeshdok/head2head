@@ -1,13 +1,15 @@
 <html>
 <head>
+	<link rel="icon" type="image/gif" href="/img/icon.gif">
 	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
 	<title>Items</title>
 </head>
 <body>
 
+
 <script>
 function openChangeCategoryPopup(){
-	var oldCategoryName = document.getElementById("categoryName").innerHTML
+	var oldCategoryName = document.getElementById("linkCategoryName").innerHTML
 	var newCategoryName=prompt("Please new name to your category.\nIf you wish to delete, enter empty string",oldCategoryName);
 	if(newCategoryName != null)
 	{
@@ -34,7 +36,7 @@ function openChangeCategoryPopup(){
 }
 
 function openChangeItemPopup(oldItemName){
-	var category = document.getElementById("categoryName").innerHTML
+	var category = document.getElementById("linkCategoryName").innerHTML
 	var newItemName=prompt("Please new name to your Item.\nIf you wish to delete, enter empty string",oldItemName);
 	if(newItemName != null)
 	{
@@ -92,6 +94,18 @@ function addComment(itemName,categoryName,userEmail,obj){
 
 }
 
+function doSubmit()
+{
+ 	//alert("hi")
+// 	if (document.getElementById('comment').value != "" && 
+// 		document.getElementById('itemName').value != ""&& 
+// 		document.getElementById('categoryName').value != ""  && 
+// 		document.getElementById('userEmail').value != "" )
+// 		return true
+// 	else
+		return false		
+}
+
 
 </script>
 
@@ -111,25 +125,32 @@ function addComment(itemName,categoryName,userEmail,obj){
 			</form>
 		</div>
 
-		You chose 
+		<div id="titleMessage">
+		<h2>Showing Items </h1>
+		</div>
+
+		
 		{% ifequal owner user.email %}
-			<b><a href="Javascript:openChangeCategoryPopup()" >{{ category }}</a></b>
+			<b><a href="Javascript:openChangeCategoryPopup()" id ="linkCategoryName">{{ category }}</a></b>
 		{% else %}
 			<b>{{ category }}</b>
 		{% endifequal %}
+
+		<br/>		
+		<iframe src="//www.facebook.com/plugins/like.php?href=./items?category={{category}}&owner={{owner}}&layout=standard&show_faces=true&width=450&action=like&colorscheme=light&height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:330px; height:26px; padding-top:3px; padding-left:10px;" allowTransparency="true"></iframe>
+		
 		
 		<div id="errorMessage">
 		<br/>
 				{% if message %}
 					<b>{{message}}</b>
 				{% endif %}
-			</div>
-		<br/>
-		<iframe src="//www.facebook.com/plugins/like.php?href=href=./items?category={{category}}&owner={{owner}}&layout=standard&show_faces=true&width=450&action=like&colorscheme=light&height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:330px; height:26px; padding-top:3px; padding-left:10px;" allowTransparency="true"></iframe>
+		</div>
+		
 		
 		<br/><br/>
 		{% if items.count  %}
-		<form name="addCommentForm" action="./addComment" method="post">
+		<form name="addCommentForm" action="./addComment" method="post" onsubmit="if(document.getElementById('itemName').value != ''){return true;}else{return false;}">
 			<table border="1">
 			<tr><th>Item Name</th><th>Wins</th><th>Loses</th></tr>
 				{% for item in items %}
@@ -165,24 +186,26 @@ function addComment(itemName,categoryName,userEmail,obj){
 		<div id="right">
 			<div id="logout">
 				<a href="{{ logoutURL }}">Sign Out</a><br/><br/>
+				<hr/>
 			</div>
 			
 			{% ifequal owner user.email %}
 	
 				<div id="addCategory">
-					<hr/>
+					
 					Add new item to <b>"{{category}}"</b>
 						<form action="./items?category={{ category }}&owner={{owner}}" method="post">
 							Item Name :- <tr/><input type="text" name="item_name">
 							<br/>
 							<input type="Submit" value="Add" /> 
 						</form>
+					<hr/>
 				</div>
 			
 			{% endifequal %}
 			
 			<div id="export">
-				<hr/>
+				
 				<form action="./items?category={{category}}&owner={{owner}}" method="post" name="exportForm">
 					<input type="hidden" id="owner" name="owner" value=""/>
 					<input type="hidden" id="category" name="category" value=""/>

@@ -1,0 +1,77 @@
+<html>	
+<head>
+	<link rel="icon" type="image/gif" href="/img/icon.gif">
+	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<title>Home</title>
+</head>
+<body>
+
+	<div id="main">
+	
+		<div id="left">
+			<p><a href="/">Home</a></p><br/>
+			<p><a href="/categories">Categories</a></p><br/>
+			<p><a href="/vote">Vote</a></p><br/>
+			<p><a href="/results">Results</a></p><br/>
+		</div>
+		
+		
+		
+		<div id="middle">
+		
+		<div id="search">
+			<form id="searchForm" name="searchForm" action="/search" method="post">
+				<input type="text" id="searchBox" name="searchBox"/>
+				<input type="submit" value="search">
+			</form>
+		</div>
+			
+			<div id="welcomeMsg">
+			<h3>Website Navigation</h3>
+			
+			<br/>
+			If you wish to :-
+			<ol> 
+				<li>Vote on an Item, click <a href="/vote">Vote</a> on the left navigation pane.
+					<ul>
+						<li>You'll be displayed two items from a selected category at random. Choose one</li>
+					</ul>
+				</li>
+				<br/>
+				<li>View results of all votes casted by all users, click <a href="/results">Results</a> on the left navigation pane.
+					<ul>
+						<li>You'll be displayed list of categories, choose one to view its results</li>
+					</ul> 
+				</li>
+				<br/>
+				<li>
+					Create a category, click <a href="/categories">Categories</a> on the left navigation pane.
+					<ul>
+						<li>You'll be displayed list of categories, created by you and other users.</li>
+						<li>On this page, you may add new category / Import a category from XML. <a href="/static/sample.xml" target="_blank">Sample XML</a></li>
+						<li>Clicking on a category, will redirect you to Items page, which shows all items under that category</li>
+						<li>On the Items page, you can add more items, to the category.</li>
+						<li>Edit Category/Item name - click on link for Category/Item, which opens a popup allowing you to put a new name.</li>
+						<li>Delete Category/Item name - click on link for Category/Item. In the pop-up enter empty string.</li>
+						<li><b>Note :- You can add/edit/delete items to a category, only if you are are creator of it.</b></li>
+						<li>Export Category along with all its Items to XML - Export to XML button on Items page allows you to do so.</li>
+					</ul> 
+				</li>
+				
+			</ol>
+			</div>								
+			 
+			<br/>
+			<div id="trendingCategories">
+			</div> 
+		</div>
+		
+		<div id="right">
+			<div id="logout">
+				<a href="{{ logoutURL }}">Sign Out</a><br/><br/>
+			</div>
+		</div>
+		
+	</div>
+</body>
+</html>

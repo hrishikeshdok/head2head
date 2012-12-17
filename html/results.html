@@ -1,9 +1,12 @@
 <html>
 <head>
+	<link rel="icon" type="image/gif" href="/img/icon.gif">
 	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
-	<title>Items</title>
+	<title>Results</title>
 </head>
 <body>
+
+
 <script>
 
 function showComments(itemName,categoryName,userEmail)
@@ -34,6 +37,10 @@ function showComments(itemName,categoryName,userEmail)
 			</form>
 		</div>
 		
+		<div id="titleMessage">
+		<h2>Showing Results</h1>
+		</div>
+		
 		<div id="errorMessage">
 			{% if message %}
 				<b>{{message}}</b>
@@ -47,7 +54,7 @@ function showComments(itemName,categoryName,userEmail)
 				{% for category in categories %}
 				<li>
 		  			<a href="./results?key={{ category.key }}">{{ category.name }}</a>
-		  			<tr/><font size="1" color="red">&nbsp&nbsp&nbsp&nbsp owner = {{category.key.parent.name}}</font>
+		  			<tr/><font size="1" color="red">&nbsp&nbsp&nbsp&nbsp Created by - {{category.key.parent.name}}</font>
 		  		</li>
 		  		{% endfor %}
 		

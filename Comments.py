@@ -73,28 +73,20 @@ class AddCommentsPage(webapp.RequestHandler):
                 message="Comment Saved"
             else:
                 message="You can comment only once on an item"
+
         else:
             #self.response.out.write("empty comment")
             message = "Cannot enter empty comment"
-        
+            
             
         items = Item.gql("WHERE ANCESTOR IS :1",Helper.getCategoryKey(owner, categoryName))
-        
-        
-        
         template_values = {
-                                   'items' : items,
-                                   'owner': owner,
-                                   'user' : users.get_current_user(),
-                                   'category' : categoryName,
-                                   'logoutURL' : users.create_logout_url('./'),
-                                   'message' : message
-                          }
-
+                           'items' : items,
+                           'owner': owner,
+                           'user' : users.get_current_user(),
+                           'category' : categoryName,
+                           'logoutURL' : users.create_logout_url('./'),
+                           'message' : message
+                  }
         path = os.path.join(os.path.dirname(__file__), './html/items.html')
         self.response.out.write(template.render(path, template_values))
-        
-
-        
-        
-        

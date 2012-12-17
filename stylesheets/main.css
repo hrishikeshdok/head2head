@@ -4,9 +4,54 @@
 #right {float: right; width: 25%;}
 */
 
+html
+{
+/*background-image:url('/img/theme_2.jpg');
+background-size: 100% 100%;
+background-color:#cccccc;
+color: #333333;
+font-family: Century Gothic, sans-serif;*/
+
+	background: url(/img/theme_2.jpg) no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	color: #333333;
+font-family: Century Gothic, sans-serif;
+background-color:#cccccc;
+
+}
+
+
+/*body {
+       margin:0; padding:0;
+   }
+   html, body, #bg {
+       height:100%;
+       width:100%;
+   }
+   #bg {
+       position:absolute; 
+       left:0;
+       right:0;
+       bottom:0;
+       top:0;
+       overflow:hidden;
+       z-index:0;
+   }
+   #bg img {
+       width:100%;
+       min-width:100%;
+       min-height:100%;
+   }
+
+*/
+
 #main {
     width: 960px;
     margin: 0 auto;
+/*    z-index:1;*/
 }
 
 #left {
@@ -25,10 +70,38 @@
 }
 
 #footer {
-    clear: both;
+ 
+    
+ float: left;
+ width: 870px;
+ 
 }
 
 #middle.showCommentsBox{
 	height:100px; 
 	overflow:auto;
+}
+
+#searchBox{
+	width: 342px;
+}
+
+/* #searchBox{ */
+/* width: 83px; */
+/* } */
+
+#verticalLine {
+    border-left:thick solid #ff0000;
+}
+
+
+#btnSkip{
+/*position: fixed;
+top: 185px;
+left: 521px;*/
+width: 87px;
+}
+
+#errorMessage{
+	color:red;
 }

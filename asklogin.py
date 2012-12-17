@@ -12,9 +12,13 @@ import Search
 import Comments
 
 
+from Helper import Category
+
 class MainPage(webapp.RequestHandler):
     def get(self):
         user = users.get_current_user()
+        
+        
         if user:
             template_values = {
                                'user':user ,
